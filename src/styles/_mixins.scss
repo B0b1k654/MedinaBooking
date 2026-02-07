@@ -1,0 +1,11 @@
+@use './variables' as *;
+
+@mixin gold-text {
+  background: $gold-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin glow {
+  box-shadow: 0 0 15px rgba(252, 226, 159, 0.3);
+}
