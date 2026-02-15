@@ -13,6 +13,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   background-color: $bg-dark;
   color: $text-light;
+  background: url('@/assets/hero.jpg') center/cover no-repeat;
 }
 
 a {
