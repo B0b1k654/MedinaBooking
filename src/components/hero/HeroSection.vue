@@ -69,11 +69,11 @@ import SearchCard from './SearchCard.vue'
   
   
 
-  &__overlay {
-    background: rgba(0, 0, 0, 0.7);
-    height: 100%;
-    min-height: 380px;
-  }
+  // &__overlay {
+  //   background: rgba(0, 0, 0, 0.7);
+  //   height: 100%;
+  //   min-height: 380px;
+  // }
 
   &__container {
     max-width: 1440px;
@@ -96,7 +96,7 @@ import SearchCard from './SearchCard.vue'
     font-weight: 700;
     font-size: clamp(40px, 4vw, 60px);
     margin-bottom: 15px;
-    background: $gold-gradient;
+    background: #FCE4BB;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -108,15 +108,16 @@ import SearchCard from './SearchCard.vue'
   &__subtitle {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 18px;
+    text-align: center;
     margin-bottom: 30px;
-    background: $gold-gradient;
+    background: #FCE4BB;
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
     display: flex;
-  justify-content: center;
+    justify-content: center;
   }
 
   /* ====== Рейтинг ====== */

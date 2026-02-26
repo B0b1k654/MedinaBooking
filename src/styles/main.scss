@@ -3,6 +3,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
 
+@font-face {  
+  font-family: 'Montserrat';  
+  src: url('../fonts/montserrat-regular.woff2') format('woff2'), url('../fonts/montserrat-regular.woff') format('woff'), url('../fonts/montserrat-regular.ttf') format('truetype') ;  
+  font-weight: 400;  
+  font-style: normal;  
+  font-display: swap;  
+}  
+
 * {
   margin: 0;
   padding: 0;
@@ -13,7 +21,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   background-color: $bg-dark;
   color: $text-light;
-  background: url('@/assets/hero.jpg') center/cover no-repeat;
+  background: url('@/assets/hero1.jpg') center/cover no-repeat;
 }
 
 a {

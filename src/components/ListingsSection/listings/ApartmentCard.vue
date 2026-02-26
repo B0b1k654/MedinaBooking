@@ -9,7 +9,7 @@
 
       <!-- Цена -->
       <div class="price-row">
-        <div class="price">5000 ₽ / сутки</div>
+        <div class="price"> <span class="price-value">5000 ₽</span> / сутки</div>
         <img src="/src/assets/favour.svg" alt="" class="heart">
       </div>
 
@@ -121,19 +121,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 5px;
 }
 
 .price {
   width: 130px;
-  font-family: 'Montserrat';
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 16px;
-
+  font-size: 14px;
+  
   background: linear-gradient(90deg, #96662D 0%, #FCE29F 65%, #C68A3A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.price-value{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  background:  #FCE29F; 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 .heart {
   width: 20px;
   height: 20px;
@@ -144,7 +152,7 @@
 .rating-row {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .stars {
@@ -165,7 +173,7 @@
   margin-left: 20px;
   gap: 5px;
 
-  font-family: 'Montserrat';
+  font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   color: #FCE4BB;
 }
@@ -179,9 +187,9 @@
 .description {
   z-index: 2;
   margin-top: 20px;
-  font-family: 'Cormorant Garamond';
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
   color: #FCE4BB;
   padding: 0px;
   // background: rgba(198, 138, 58, 0.15);
@@ -210,7 +218,7 @@
   border: none;
   border-radius: 5px;
 
-  font-family: 'Montserrat';
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 13px;
 

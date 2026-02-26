@@ -2,17 +2,17 @@
   <div class="search-card">
     <div class="input">
       <span>Дата заезда</span>
-      <svg width="16" height="16"></svg>
+      <img src="/src/assets/calendar.svg" alt="">
     </div>
 
     <div class="input">
       <span>Дата выезда</span>
-      <svg width="16" height="16"></svg>
+      <img src="/src/assets/calendar.svg" alt="">
     </div>
 
     <div class="input">
       <span>Гости</span>
-      <svg width="16" height="16"></svg>
+      <img src="/src/assets/guest.svg" alt="">
     </div>
 
     <button class="search-btn">
@@ -31,6 +31,7 @@
 </script>
 
 <style scoped lang="scss">
+
 .search-card {
   width: 300px;
   margin-left: 90px;
@@ -46,6 +47,7 @@
 
 /* Инпут */
 .input {
+  font-family: 'Montserrat', sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +56,8 @@
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.08);
   color: white;
-  font-size: 14px;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 /* Кнопка */
