@@ -29,10 +29,17 @@ defineProps<{
 }>()
 </script>
 
-<!-- <style scoped lang="scss">
-.apartments {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+<style scoped lang="scss">
+.listings{
+  margin-left: 114px;
+  margin-right: 10px;
 }
-</style> -->
+.list{
+  background: #000;
+  border-radius: 30px;
+  max-width: 530px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 1px;
+}
+</style>

@@ -26,6 +26,10 @@
         <a href="#">Избранное</a>
         <a href="#">Бронирования</a>
       </nav>
+      <div class="auth"> 
+        <img src="/src/assets/profile.svg" alt="" class="profile-img">
+        <span>Профиль</span>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -75,6 +79,7 @@
 .right{
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 .flag{
   margin-left: 20px;
@@ -84,7 +89,7 @@
   height: 69px;
   padding-right: 90px;
   padding-left: 90px;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 /* Лого */
@@ -93,6 +98,7 @@
   font-weight: 500;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 /* Навигация */
@@ -104,6 +110,14 @@
 .nav a {
   text-decoration: none;
   color: #F0D89D;
+}
+.auth{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.profile-img{
+  margin-right: 10px;
 }
   
 /* Адаптив */

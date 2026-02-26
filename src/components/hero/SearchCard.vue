@@ -64,15 +64,20 @@
   border-radius: 5px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(
-    90deg,
-    #96662D 0%,
-    #FCE29F 65%,
-    #C68A3A 100%
-  );
+  // background: linear-gradient(
+  //   90deg,
+  //   #96662D 0%,
+  //   #FCE29F 65%,
+  //   #C68A3A 100%
+  // );
   display: flex;
   align-items: center;
   justify-content: center;
+   background: linear-gradient(90deg, #96662D 0%, #C68A3A 25%, #FCE29F 50%,  #C68A3A 75%, #96662D 100% );
+  background-size: 200%;
+  animation: animate-gradient 5s 2s linear
+    infinite;
+  
 }
 
 /* Текст */
@@ -122,5 +127,13 @@
     margin-left: 20px;
     width: 90%;
   }
+}
+
+@keyframes animate-gradient{
+  
+  to{
+    background-position: 200%;
+  }
+  // animation: name duration timing-function delay iteration-count direction fill-mode;
 }
 </style>

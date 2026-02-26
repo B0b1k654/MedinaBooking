@@ -4,15 +4,17 @@
 
     <SortBar v-model="sortType" />
 
-    <section class="content container">
-      <div class="left">
-        <ApartmentsGrid :apartments="mockData" />
-      </div>
+    <div class="content_overlay">
+      <section class="content container">
+        <div class="left">
+          <ApartmentsGrid :apartments="mockData" />
+        </div>
 
-      <div class="right">
-        <MapPlaceholder />
-      </div>
-    </section>
+        <div class="right">
+          <MapPlaceholder />
+        </div>
+      </section>
+    </div>
   </MainLayout>
 </template>
 
@@ -21,8 +23,8 @@ import { ref } from 'vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import HeroSection from '@/components/hero/HeroSection.vue'
 import SortBar from '@/components/filters/SortBar.vue'
-import ApartmentsGrid from '@/components/listings/ApartmentsGrid.vue'
-import MapPlaceholder from '@/components/map/MapPlaceholder.vue'
+import ApartmentsGrid from '@/components/ListingsSection/listings/ApartmentsGrid.vue'
+import MapPlaceholder from '@/components/ListingsSection/MapPlaceholder.vue'
 
 const sortType = ref('popular')
 
@@ -48,8 +50,18 @@ const mockData = [
 .content {
   display: flex;
   gap: 40px;
-  margin-top: 60px;
   align-items: flex-start;
+  max-width: 1440px;
+  justify-content: center;
+  justify-items: center;
+  margin: 0 auto;
+  padding-top: 40px;
+
+  &_overlay{
+    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+  }
 }
 
 .left {
@@ -57,7 +69,7 @@ const mockData = [
 }
 
 .right {
-  flex: 1;
+  flex: 0 0 649px;
   position: sticky;
   top: 120px;
 }
@@ -68,6 +80,7 @@ const mockData = [
   }
 
   .right {
+    width: 100%;
     position: static;
     margin-top: 40px;
   }

@@ -9,8 +9,9 @@
 
 <style scoped lang="scss">
 .map {
+  // width: 650px;
   width: 100%;
-  height: 500px;
+  height: 700px;
   border: 1px solid #FCE4BB;
   border-radius: 20px;
   display: flex;
