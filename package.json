@@ -4,9 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev.mjs",
+    "dev:client": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:server": "node server/index.js",
+    "dev:full": "node scripts/dev.mjs"
   },
   "dependencies": {
     "pinia": "^3.0.4",
@@ -17,6 +20,7 @@
     "@types/node": "^24.10.1",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
+    "concurrently": "^9.2.1",
     "sass": "^1.97.3",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",

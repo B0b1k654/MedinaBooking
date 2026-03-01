@@ -26,7 +26,7 @@
         <a href="#">Избранное</a>
         <a href="#">Бронирования</a>
       </nav>
-      <button class="auth" type="button" @click="openAuthModal">
+      <!-- <button class="auth" type="button" @click="openAuthModal">
         <img src="/src/assets/profile.svg" alt="profile" class="profile-img">
         <span>Вход / Регистрация</span>
       </button>
@@ -53,11 +53,19 @@
           type="button"
           @click="authMode = 'register'"
         >
-          Зарегистрироваться
+          Зарегистрироваться -->
+        <div class="auth-block">
+        <span v-if="currentUser" class="user-name">{{ currentUser.name }}</span>
+        <button class="auth" type="button" @click="onAuthClick">
+          <img src="/src/assets/profile.svg" alt="profile" class="profile-img">
+          <span>{{ currentUser ? 'Выйти' : 'Вход / Регистрация' }}</span>
         </button>
       </div>
+    </div>
+    <div class="divider"></div>
+  </header>
 
-      <form class="auth-modal__form" @submit.prevent>
+      <!-- <form class="auth-modal__form" @submit.prevent>
         <input
           v-if="authMode === 'register'"
           type="text"
@@ -72,34 +80,56 @@
         </button>
       </form>
 
-      <div class="auth-modal__divider">или</div>
+      <div class="auth-modal__divider">или</div> -->
 
-      <button class="telegram-btn" type="button">
+      <!-- <button class="telegram-btn" type="button">
         <span class="telegram-icon">✈</span>
         <span>
           {{ authMode === 'login' ? 'Войти через Telegram' : 'Регистрация через Telegram' }}
         </span>
       </button>
     </div>
-  </div>
+  </div> -->
+  <AuthModal v-model="isAuthModalOpen" @authenticated="onAuthenticated" />
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import AuthModal from './AuthModal.vue'
 
 defineOptions({ name: 'AppHeader' })
 
-type AuthMode = 'login' | 'register'
-
-const isAuthModalOpen = ref(false)
-const authMode = ref<AuthMode>('login')
-
-const openAuthModal = () => {
-  isAuthModalOpen.value = true
+type User = {
+  id: number
+  name: string
+  email: string
 }
 
-const closeAuthModal = () => {
-  isAuthModalOpen.value = false
+const isAuthModalOpen = ref(false)
+const currentUser = ref<User | null>(null)
+
+
+onMounted(() => {
+  const savedUser = localStorage.getItem('authUser')
+
+  if (savedUser) {
+    currentUser.value = JSON.parse(savedUser) as User
+  }
+})
+
+function onAuthenticated(user: User) {
+  currentUser.value = user
+  localStorage.setItem('authUser', JSON.stringify(user))
+}
+
+function onAuthClick() {
+  if (currentUser.value) {
+    currentUser.value = null
+    localStorage.removeItem('authUser')
+    return
+  }
+
+  isAuthModalOpen.value = true
 }
 </script>
 
@@ -175,6 +205,16 @@ const closeAuthModal = () => {
   color: #F0D89D;
 }
 
+.auth-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 13px;
+}
+
 .auth {
   display: flex;
   align-items: center;
@@ -185,122 +225,130 @@ const closeAuthModal = () => {
   padding: 8px 14px;
   border-radius: 10px;
 }
+//   cursor: pointer;
+//   border: 1px solid #f0d89d;
+//   background: transparent;
+//   color: #f0d89d;
+//   padding: 8px 14px;
+//   border-radius: 10px;
+// }
 
 .profile-img{
   margin-right: 10px;
 }
+
   
-.auth-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
+// .auth-modal-overlay {
+//   position: fixed;
+//   inset: 0;
+//   background: rgba(0, 0, 0, 0.6);
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 1000;
+//   padding: 20px;
+// }
 
-.auth-modal {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  background: #111;
-  color: #f0d89d;
-  border: 1px solid #f0d89d;
-  border-radius: 16px;
-  padding: 24px;
-}
+// .auth-modal {
+//   position: relative;
+//   width: 100%;
+//   max-width: 420px;
+//   background: #111;
+//   color: #f0d89d;
+//   border: 1px solid #f0d89d;
+//   border-radius: 16px;
+//   padding: 24px;
+// }
 
-.auth-modal__close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  border: none;
-  background: transparent;
-  color: #f0d89d;
-  font-size: 20px;
-  cursor: pointer;
-}
+// .auth-modal__close {
+//   position: absolute;
+//   top: 10px;
+//   right: 12px;
+//   border: none;
+//   background: transparent;
+//   color: #f0d89d;
+//   font-size: 20px;
+//   cursor: pointer;
+// }
 
-.auth-modal__switcher {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 18px;
-}
+// .auth-modal__switcher {
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   gap: 8px;
+//   margin-bottom: 18px;
+// }
 
-.switcher-btn {
-  border: 1px solid #f0d89d;
-  background: transparent;
-  color: #f0d89d;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
-}
+// .switcher-btn {
+//   border: 1px solid #f0d89d;
+//   background: transparent;
+//   color: #f0d89d;
+//   padding: 10px;
+//   border-radius: 10px;
+//   cursor: pointer;
+// }
 
-.switcher-btn.active {
-  background: #f0d89d;
-  color: #111;
-  font-weight: 600;
-}
+// .switcher-btn.active {
+//   background: #f0d89d;
+//   color: #111;
+//   font-weight: 600;
+// }
 
-.auth-modal__form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+// .auth-modal__form {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 10px;
+// }
 
-.auth-modal__form input {
-  border-radius: 10px;
-  border: 1px solid rgba(240, 216, 157, 0.4);
-  background: #1f1f1f;
-  color: #fff;
-  padding: 12px;
-}
+// .auth-modal__form input {
+//   border-radius: 10px;
+//   border: 1px solid rgba(240, 216, 157, 0.4);
+//   background: #1f1f1f;
+//   color: #fff;
+//   padding: 12px;
+// }
 
-.primary-btn {
-  margin-top: 6px;
-  border: none;
-  border-radius: 10px;
-  background: #f0d89d;
-  color: #111;
-  padding: 12px;
-  cursor: pointer;
-  font-weight: 600;
-}
+// .primary-btn {
+//   margin-top: 6px;
+//   border: none;
+//   border-radius: 10px;
+//   background: #f0d89d;
+//   color: #111;
+//   padding: 12px;
+//   cursor: pointer;
+//   font-weight: 600;
+// }
 
-.auth-modal__divider {
-  text-align: center;
-  margin: 14px 0;
-  color: rgba(240, 216, 157, 0.8);
-}
+// .auth-modal__divider {
+//   text-align: center;
+//   margin: 14px 0;
+//   color: rgba(240, 216, 157, 0.8);
+// }
 
-.telegram-btn {
-  width: 100%;
-  border: 1px solid #2aabee;
-  border-radius: 10px;
-  background: rgba(42, 171, 238, 0.1);
-  color: #c9edff;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-}
+// .telegram-btn {
+//   width: 100%;
+//   border: 1px solid #2aabee;
+//   border-radius: 10px;
+//   background: rgba(42, 171, 238, 0.1);
+//   color: #c9edff;
+//   padding: 12px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   gap: 10px;
+//   cursor: pointer;
+// }
 
-.telegram-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #2aabee;
-  color: #fff;
-  font-size: 14px;
-}
+// .telegram-icon {
+//   width: 24px;
+//   height: 24px;
+//   border-radius: 50%;
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   background: #2aabee;
+//   color: #fff;
+//   font-size: 14px;
+// }
 
 
 /* Адаптив */
@@ -315,7 +363,7 @@ const closeAuthModal = () => {
     padding-right: 40px;
   }
 
-  .logo {
+  .logo_wrapper {
     margin-right: 40px;
   }
 
@@ -339,18 +387,18 @@ const closeAuthModal = () => {
     font-size: 12px;
   }
 
-  .header__bottom {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
+  // .header__bottom {
+  //   padding-left: 20px;
+  //   padding-right: 20px;
+  // }
 
-  .auth {
-    padding: 7px 10px;
-    font-size: 12px;
-  }
+  // .auth {
+  //   padding: 7px 10px;
+  //   font-size: 12px;
+  // }
 
-  .profile-img {
-    margin-right: 6px;
-  }
+  // .profile-img {
+  //   margin-right: 6px;
+  // }
 }
 </style>

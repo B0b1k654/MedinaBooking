@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Amir",
+      "email": "test1@mail.ru",
+      "passwordHash": "e32e5f2d5b74200ca9525b03d7fbb30f:6687028e9802ae95b8dccb3e2c37c783bd485cc8bda1233ebf710df14e6d98d423342dba6ec7315a0d1e3297b6d2d4250248112e5dc90caa5d3af0be4dbbfb7f",
+      "createdAt": "2026-02-28T15:00:43.310Z"
+    }
+  ],
+  "lastId": 1
+}
