@@ -1,7 +1,13 @@
 <template>
   <section class="listings">
     <div class="list">
-      <ApartmentCard v-for="i in 11" :key="i" />
+       <template v-for="item in apartments" :key="item.id">
+        <ApartmentCard
+          v-for="unitIndex in item.quantity"
+          :key="`${item.id}-${unitIndex}`"
+          :apartment="item"
+        />
+      </template>
     </div>
     </section>
   <!-- <div class="apartments">
@@ -16,12 +22,14 @@
 <script setup lang="ts">
 import ApartmentCard from './ApartmentCard.vue'
 
-interface Apartment {
+export interface Apartment {
+  listingId: string
   id: number
   title: string
-  price: number
-  image: string
-  rating: number
+  rooms: number | null
+  quantity?: number
+  pricePerDay: number
+  capacity: number
 }
 
 defineProps<{

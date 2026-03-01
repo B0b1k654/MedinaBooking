@@ -1,12 +1,46 @@
 {
-  "users": [
+  "users": [],
+  "apartments": [
     {
-      "id": 1,
-      "name": "Amir",
-      "email": "test1@mail.ru",
-      "passwordHash": "e32e5f2d5b74200ca9525b03d7fbb30f:6687028e9802ae95b8dccb3e2c37c783bd485cc8bda1233ebf710df14e6d98d423342dba6ec7315a0d1e3297b6d2d4250248112e5dc90caa5d3af0be4dbbfb7f",
-      "createdAt": "2026-02-28T15:00:43.310Z"
+      "id": 2,
+      "title": "1-комнатная квартира",
+      "rooms": 1,
+      "quantity": 1,
+      "pricePerDay": 5000,
+      "capacity": 3
+    },
+    {
+      "id": 2,
+      "title": "2-комнатная квартира",
+      "rooms": 2,
+      "quantity": 2,
+      "pricePerDay": 6500,
+      "capacity": 4
+    },
+    {
+      "id": 3,
+      "title": "3-комнатная квартира",
+      "rooms": 3,
+      "quantity": 4,
+      "pricePerDay": 10000,
+      "capacity": 7
+    },
+    {
+      "id": 4,
+      "title": "4-комнатная квартира",
+      "rooms": 4,
+      "quantity": 4,
+      "pricePerDay": 12500,
+      "capacity": 10
+    },
+    {
+      "id": 5,
+      "title": "Люкс квартира",
+      "rooms": null,
+      "quantity": 1,
+      "pricePerDay": 15000,
+      "capacity": 7
     }
   ],
-  "lastId": 1
+  "lastId": 0
 }

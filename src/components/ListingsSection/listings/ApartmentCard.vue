@@ -1,65 +1,77 @@
 <template>
   <div class="card">
+    <img class="image" src="@/assets/apartment.jpg" :alt="apartment.title" />
 
-    <!-- Фото -->
-    <img class="image" src="@/assets/apartment.jpg" />
-
-    <!-- Контент -->
     <div class="info">
 
-      <!-- Цена -->
       <div class="price-row">
-        <div class="price"> <span class="price-value">5000 ₽</span> / сутки</div>
-        <img src="/src/assets/favour.svg" alt="" class="heart">
+        <div class="price"><span class="price-value">{{ apartment.pricePerDay }} ₽</span> / сутки</div>
+        <img src="/src/assets/favour.svg" alt="Избранное" class="heart" />
       </div>
 
-      <!-- Рейтинг -->
       <div class="rating-row">
-        <div class="stars">
-          <span v-for="i in 5" :key="i">★</span>
+        <div class="area">
+          <img src="/src/assets/square.svg" alt="Комнаты" class="ruler" />
+          <span>{{ roomsLabel }}</span>
         </div>
 
-        <div class="area">
-          <img src="/src/assets/square.svg" alt="" class="ruler">
-          <span>35 кв. м</span>
+        <div class="capacity">
+          До {{ apartment.capacity }} чел.>
         </div>
       </div>
 
-      <!-- Описание -->
       <div class="description">
         <div class="description-backlight"></div>
-        Уютная 1-комнатная квартира
+        {{ apartment.title }} 
       </div>
 
-      <!-- Кнопка -->
-      <button class="book-btn">
-        Забронировать
-      </button>
+      <button class="book-btn">Забронировать</button>
 
     </div>
   </div>
 </template>
 
+<script setup lang="ts">
+import { computed } from 'vue'
+
+interface Apartment {
+  id: number
+  title: string
+  rooms: number | null
+  pricePerDay: number
+  capacity: number
+}
+
+const props = defineProps<{
+  apartment: Apartment
+}>()
+
+const roomsLabel = computed(() => {
+  if (props.apartment.rooms === null) {
+    return 'Люкс'
+  }
+
+  return `${props.apartment.rooms} комн.`
+})
+</script>
+
 <style scoped lang="scss">
 .card {
   width: 480px;
   height: 164px;
-
   display: flex;
   gap: 25px;
-
   position: relative;
   margin-bottom: 20px;
   padding: 0;
 
-  /* золотая подсветка сверху и снизу */
   &::before,
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-     height: 2px;
+    height: 2px;
     border-radius: 999px;
     background: linear-gradient(
       120deg,
@@ -82,8 +94,8 @@
   }
 
   &::after {
-    bottom: 0
-    animation-delay 1.2s;
+    bottom: 0;
+    animation-delay: 1.2s;
   }
 }
 
@@ -116,7 +128,6 @@
   padding-top: 5px;
 }
 
-/* Цена */
 .price-row {
   display: flex;
   justify-content: space-between;
@@ -125,7 +136,7 @@
 }
 
 .price {
-  width: 130px;
+  width: 160px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -155,24 +166,23 @@
   margin-top: 15px;
 }
 
-.stars {
-  display: flex;
-  gap: 2px;
+// .stars {
+//   display: flex;
+//   gap: 2px;
 
-  span {
-    font-size: 14px;
-    background: linear-gradient(90deg, #96662D 0%, #FCE29F 65%, #C68A3A 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-}
+//   span {
+//     font-size: 14px;
+//     background: linear-gradient(90deg, #96662D 0%, #FCE29F 65%, #C68A3A 100%);
+//     -webkit-background-clip: text;
+//     -webkit-text-fill-color: transparent;
+//   }
+// }
 
-.area {
+.area, .capacity {
   display: flex;
   align-items: center;
-  margin-left: 20px;
+  // margin-left: 20px;
   gap: 5px;
-
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   color: #FCE4BB;
@@ -190,8 +200,8 @@
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 12px;
-  color: #FCE4BB;
-  padding: 0px;
+  // color: #FCE4BB;
+  // padding: 0px;
   // background: rgba(198, 138, 58, 0.15);
   // border-radius: 4px;
 }
@@ -211,17 +221,13 @@
 // }
 .book-btn {
   margin-top: 20px;
-
   width: 144px;
   height: 26px;
-
   border: none;
   border-radius: 5px;
-
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 13px;
-
   background: linear-gradient(90deg, #96662D 0%, #C68A3A 25%, #FCE29F 50%,  #C68A3A 75%, #96662D 100% );
   background-size: 200%;
   animation: animate-gradient 5s linear

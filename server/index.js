@@ -10,18 +10,77 @@ const __dirname = path.dirname(__filename)
 const PORT = Number(process.env.PORT || 3001)
 const dataDir = path.resolve(__dirname, '../data')
 const dbPath = path.join(dataDir, 'users.json')
+const defaultApartments = [
+  {
+    id: 1,
+    title: '1-комнатная квартира',
+    rooms: 1,
+    quantity: 1,
+    pricePerDay: 5000,
+    capacity: 3
+  },
+  {
+    id: 2,
+    title: '2-комнатная квартира',
+    rooms: 2,
+    quantity: 2,
+    pricePerDay: 6500,
+    capacity: 4
+  },
+  {
+    id: 3,
+    title: '3-комнатная квартира',
+    rooms: 3,
+    quantity: 4,
+    pricePerDay: 10000,
+    capacity: 7
+  },
+  {
+    id: 4,
+    title: '4-комнатная квартира',
+    rooms: 4,
+    quantity: 4,
+    pricePerDay: 12500,
+    capacity: 10
+  },
+  {
+    id: 5,
+    title: 'Люкс квартира',
+    rooms: null,
+    quantity: 1,
+    pricePerDay: 15000,
+    capacity: 7
+  }
+]
 
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true })
 }
 
 if (!fs.existsSync(dbPath)) {
-  fs.writeFileSync(dbPath, JSON.stringify({ users: [], lastId: 0 }, null, 2))
+   fs.writeFileSync(
+    dbPath,
+    JSON.stringify({ users: [], apartments: defaultApartments, lastId: 0 }, null, 2)
+  )
 }
 
 function readDb() {
   const raw = fs.readFileSync(dbPath, 'utf-8')
-  return JSON.parse(raw)
+   const db = JSON.parse(raw)
+
+  if (!Array.isArray(db.users)) {
+    db.users = []
+  }
+
+  if (!Array.isArray(db.apartments)) {
+    db.apartments = defaultApartments
+  }
+
+  if (typeof db.lastId !== 'number') {
+    db.lastId = 0
+  }
+
+  return db
 }
 
 function writeDb(db) {
@@ -73,6 +132,14 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'GET' && req.url === '/api/health') {
     return sendJson(res, 200, { ok: true })
+  }
+
+  if (req.method === 'GET' && req.url === '/api/apartments') {
+    const db = readDb()
+
+    return sendJson(res, 200, {
+      apartments: db.apartments
+    })
   }
 
   if (req.method === 'POST' && req.url === '/api/auth/register') {
