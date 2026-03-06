@@ -1,29 +1,25 @@
 <template>
   <section class="listings">
     <div class="list">
-       <template v-for="item in apartments" :key="item.id">
+      <template v-for="item in apartments" :key="item.id">
         <ApartmentCard
           v-for="unitIndex in item.quantity"
           :key="`${item.id}-${unitIndex}`"
           :apartment="item"
+          :listing-id="`${item.id}-${unitIndex}`"
+          :is-favorite="favoriteIdsSet.has(`${item.id}-${unitIndex}`)"
+          :favorites-disabled="favoritesDisabled"
+          @toggle-favorite="emit('toggle-favorite', $event)"
         />
       </template>
     </div>
     </section>
-  <!-- <div class="apartments">
-    <ApartmentCard
-      v-for="item in apartments"
-      :key="item.id"
-      :apartment="item"
-    />
-  </div> -->
 </template>
 
 <script setup lang="ts">
 import ApartmentCard from './ApartmentCard.vue'
 
 export interface Apartment {
-  listingId: string
   id: number
   title: string
   rooms: number | null
@@ -34,6 +30,12 @@ export interface Apartment {
 
 defineProps<{
   apartments: Apartment[]
+  favoriteIdsSet: Set<string>
+  favoritesDisabled?: boolean
+}>()
+
+const emit = defineEmits<{
+  'toggle-favorite': [listingId: string]
 }>()
 </script>
 

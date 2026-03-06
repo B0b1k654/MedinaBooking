@@ -8,7 +8,14 @@
       <section class="content container">
         <div class="left">
           <p v-if="error" class="error-message">{{ error }}</p>
-          <ApartmentsGrid :apartments="apartments" />
+          <p v-if="favoriteError" class="error-message">{{ favoriteError }}</p>
+          <p v-if="favoriteInfo" class="info-message">{{ favoriteInfo }}</p>
+          <ApartmentsGrid
+            :apartments="apartments"
+            :favorite-ids-set="favoriteIdsSet"
+            :favorites-disabled="favoritesBusy"
+            @toggle-favorite="handleToggleFavorite"
+          />
         </div>
 
         <div class="right">
@@ -20,59 +27,43 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import HeroSection from '@/components/hero/HeroSection.vue'
 import SortBar from '@/components/filters/SortBar.vue'
 import ApartmentsGrid, { type Apartment } from '@/components/ListingsSection/listings/ApartmentsGrid.vue'
 import MapPlaceholder from '@/components/ListingsSection/MapPlaceholder.vue'
+import { useAuth } from '@/composables/auth'
+import { useFavorites } from '@/composables/favorites'
+import { apiUrl } from '@/utils/api'
 
-// interface ApartmentFromApi {
-//   id: number
-//   title: string
-//   rooms: number | null
-//   quantity: number
-//   pricePerDay: number
-//   capacity: number
-// }
+const fallbackApartments: Apartment[] = [
+  { id: 1, title: '1-комнатная квартира', rooms: 1, quantity: 1, pricePerDay: 5000, capacity: 3 },
+  { id: 2, title: '2-комнатная квартира', rooms: 2, quantity: 2, pricePerDay: 6500, capacity: 4 },
+  { id: 3, title: '3-комнатная квартира', rooms: 3, quantity: 4, pricePerDay: 10000, capacity: 7 },
+  { id: 4, title: '4-комнатная квартира', rooms: 4, quantity: 4, pricePerDay: 12500, capacity: 10 },
+  { id: 5, title: 'Люкс квартира', rooms: null, quantity: 1, pricePerDay: 15000, capacity: 7 }
+]
 
 const sortType = ref('popular')
 const apartments = ref<Apartment[]>([])
 const error = ref('')
+const favoriteInfo = ref('')
 
-// function expandApartments(source: ApartmentFromApi[]): Apartment[] {
-//   return source
-//     .flatMap((apartment) => {
-//       return Array.from({ length: apartment.quantity }, (_, index) => ({
-//         listingId: `${apartment.id}-${index + 1}`,
-//         id: apartment.id,
-//         title: apartment.title,
-//         rooms: apartment.rooms,
-//         pricePerDay: apartment.pricePerDay,
-//         capacity: apartment.capacity
-//       }))
-//     })
-// }
+const { currentUser, refreshFromStorage } = useAuth()
+const {
+  favoriteIdsSet,
+  errorMessage: favoriteError,
+  isBusy: favoritesBusy,
+  loadFavorites,
+  toggleFavorite
+} = useFavorites()
 
-// const mockData = [
-//   {
-//     id: 1,
-//     title: 'Luxury Apartment near Haram',
-//     price: 120,
-//     image: '/image.jpg',
-//     rating: 4.8,
-//   },
-//   {
-//     id: 2,
-//     title: 'Modern Suite with View',
-//     price: 95,
-//     image: '/image.jpg',
-//     rating: 4.6,
-//   },
-// ]
 onMounted(async () => {
+  refreshFromStorage()
+
   try {
-    const response = await fetch('http://localhost:3001/api/apartments')
+    const response = await fetch(apiUrl('/api/apartments'))
 
     if (!response.ok) {
       throw new Error('Не удалось загрузить квартиры')
@@ -80,10 +71,35 @@ onMounted(async () => {
 
     const data = await response.json() as { apartments?: Apartment[] }
     apartments.value = Array.isArray(data.apartments) ? data.apartments : []
-  } catch {
-    error.value = 'Не удалось загрузить список квартир с сервера.'
+  } catch (errorUnknown) {
+    apartments.value = fallbackApartments
+
+    if (errorUnknown instanceof TypeError) {
+      error.value = 'API недоступно. Показаны локальные данные. Запустите backend (`npm run dev` или `npm run dev:server`).'
+    } else {
+      error.value = 'Не удалось загрузить список квартир с сервера.'
+    }
   }
 })
+
+watch(currentUser, async (user) => {
+  await loadFavorites(user)
+}, { immediate: true })
+
+async function handleToggleFavorite(listingId: string) {
+  favoriteInfo.value = ''
+
+  if (!currentUser.value) {
+    favoriteInfo.value = 'Чтобы добавить квартиру в избранное, сначала войдите в аккаунт.'
+    return
+  }
+
+  try {
+    await toggleFavorite(currentUser.value, listingId)
+  } catch {
+    // ошибка уже показана через favoriteError
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -111,6 +127,13 @@ onMounted(async () => {
   color: #ff8d8d;
 }
 
+.info-message {
+  margin-left: 114px;
+  margin-bottom: 16px;
+  font-family: 'Montserrat', sans-serif;
+  color: #f0d89d;
+}
+
 .left {
   flex: 2;
 }
@@ -133,3 +156,5 @@ onMounted(async () => {
   }
 }
 </style>
+
+

@@ -6,7 +6,16 @@
 
       <div class="price-row">
         <div class="price"><span class="price-value">{{ apartment.pricePerDay }} ₽</span> / сутки</div>
-        <img src="/src/assets/favour.svg" alt="Избранное" class="heart" />
+        <button
+          type="button"
+          class="heart-btn"
+          :class="{ active: isFavorite }"
+          :disabled="favoritesDisabled"
+          @click="emit('toggle-favorite', listingId)"
+        >
+          <span class="heart-icon" aria-hidden="true">{{ isFavorite ? '♥' : '♡' }}</span>
+          <span class="sr-only">Избранное</span>
+        </button>
       </div>
 
       <div class="rating-row">
@@ -44,6 +53,13 @@ interface Apartment {
 
 const props = defineProps<{
   apartment: Apartment
+  listingId: string
+  isFavorite: boolean
+  favoritesDisabled?: boolean
+}>()
+
+const emit = defineEmits<{
+  'toggle-favorite': [listingId: string]
 }>()
 
 const roomsLabel = computed(() => {
@@ -153,10 +169,54 @@ const roomsLabel = computed(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.heart {
-  width: 20px;
-  height: 20px;
+// .heart {
+//   width: 20px;
+//   height: 20px;
+//   cursor: pointer;
+// }
+
+.heart-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+}
+
+.heart-icon {
+  font-size: 24px;
+  line-height: 1;
+  color: #fce29f;
+  transition: transform 0.2s ease;
+}
+
+.heart-btn.active .heart-icon {
+  color: #ff6b81;
+}
+
+.heart-btn:hover .heart-icon {
+  transform: scale(1.08);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Рейтинг */

@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { apiUrl } from '@/utils/api'
 
 type User = {
   id: number
@@ -96,7 +97,7 @@ async function submitForm() {
   successMessage.value = ''
 
   try {
-    const endpoint = mode.value === 'login' ? '/api/auth/login' : '/api/auth/register'
+    const endpoint = mode.value === 'login' ? apiUrl('/api/auth/login') : apiUrl('/api/auth/register')
 
     const response = await fetch(endpoint, {
       method: 'POST',

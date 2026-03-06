@@ -1,8 +1,19 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": 1,
+      "name": "Amir",
+      "email": "test1@mail.ru",
+      "passwordHash": "4e62cf64bd66cc494008e61bb599305b:a1c7e2663e05aeb811e1cab097ccd24d5d36c27df60b28a21933a68bdf62b1005423df59db974af1535bf79970273060623ba09b2700dff72aba2dc35cdddcdd",
+      "favoriteApartmentIds": [
+        1
+      ],
+      "createdAt": "2026-03-01T22:36:23.038Z"
+    }
+  ],
   "apartments": [
     {
-      "id": 2,
+      "id": 1,
       "title": "1-комнатная квартира",
       "rooms": 1,
       "quantity": 1,
@@ -42,5 +53,5 @@
       "capacity": 7
     }
   ],
-  "lastId": 0
+  "lastId": 1
 }

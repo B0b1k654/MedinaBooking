@@ -58,7 +58,7 @@ if (!fs.existsSync(dataDir)) {
 }
 
 if (!fs.existsSync(dbPath)) {
-   fs.writeFileSync(
+  fs.writeFileSync(
     dbPath,
     JSON.stringify({ users: [], apartments: defaultApartments, lastId: 0 }, null, 2)
   )
@@ -66,11 +66,26 @@ if (!fs.existsSync(dbPath)) {
 
 function readDb() {
   const raw = fs.readFileSync(dbPath, 'utf-8')
-   const db = JSON.parse(raw)
+  const db = JSON.parse(raw)
 
   if (!Array.isArray(db.users)) {
     db.users = []
   }
+
+  db.users = db.users.map((user) => {
+    const favoriteListingIds = Array.isArray(user.favoriteListingIds)
+      ? user.favoriteListingIds.filter((id) => typeof id === 'string' && /^\d+-\d+$/.test(id))
+      : Array.isArray(user.favoriteApartmentIds)
+        ? user.favoriteApartmentIds
+          .filter((id) => Number.isInteger(id))
+          .map((id) => `${id}-1`)
+        : []
+
+    return {
+      ...user,
+      favoriteListingIds
+    }
+  })
 
   if (!Array.isArray(db.apartments)) {
     db.apartments = defaultApartments
@@ -91,8 +106,8 @@ function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
+    'Access-Control-Allow-Headers': 'Content-Type, x-user-id',
+    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS'
   })
   res.end(JSON.stringify(payload))
 }
@@ -125,6 +140,52 @@ function parseBody(req) {
   })
 }
 
+
+function parseListingId(listingIdRaw) {
+  const listingId = String(listingIdRaw || '')
+  const match = /^(\d+)-(\d+)$/.exec(listingId)
+
+  if (!match) {
+    return null
+  }
+
+  const apartmentId = Number(match[1])
+  const unitIndex = Number(match[2])
+
+  if (!Number.isInteger(apartmentId) || !Number.isInteger(unitIndex) || unitIndex < 1) {
+    return null
+  }
+
+  return { listingId, apartmentId, unitIndex }
+}
+
+function listingExists(apartments, apartmentId, unitIndex) {
+  const apartment = apartments.find((candidate) => candidate.id === apartmentId)
+
+  if (!apartment) {
+    return false
+  }
+
+  return unitIndex <= apartment.quantity
+}
+
+function getUserByHeader(req, db) {
+  const rawUserId = req.headers['x-user-id']
+  const userId = Number(rawUserId)
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return { error: 'Требуется авторизация.' }
+  }
+
+  const user = db.users.find((candidate) => candidate.id === userId)
+
+  if (!user) {
+    return { error: 'Пользователь не найден.' }
+  }
+
+  return { user }
+}
+
 const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     return sendJson(res, 204, {})
@@ -140,6 +201,59 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, {
       apartments: db.apartments
     })
+  }
+
+  if (req.method === 'GET' && req.url === '/api/favorites') {
+    const db = readDb()
+    const result = getUserByHeader(req, db)
+
+    if (result.error) {
+      return sendJson(res, 401, { message: result.error })
+    }
+
+    return sendJson(res, 200, {
+      favoriteListingIds: result.user.favoriteListingIds
+    })
+  }
+
+  if ((req.method === 'POST' || req.method === 'DELETE') && req.url === '/api/favorites') {
+    try {
+      const db = readDb()
+      const result = getUserByHeader(req, db)
+
+      if (result.error) {
+        return sendJson(res, 401, { message: result.error })
+      }
+
+      const body = await parseBody(req)
+      const parsed = parseListingId(body.listingId)
+
+      if (!parsed) {
+        return sendJson(res, 400, { message: 'Некорректный идентификатор квартиры.' })
+      }
+
+      if (!listingExists(db.apartments, parsed.apartmentId, parsed.unitIndex)) {
+        return sendJson(res, 404, { message: 'Квартира не найдена.' })
+      }
+
+      if (req.method === 'POST') {
+        if (!result.user.favoriteListingIds.includes(parsed.listingId)) {
+          result.user.favoriteListingIds.push(parsed.listingId)
+        }
+      } else {
+        result.user.favoriteListingIds = result.user.favoriteListingIds.filter((id) => id !== parsed.listingId)
+      }
+
+      writeDb(db)
+
+      return sendJson(res, 200, {
+        favoriteListingIds: result.user.favoriteListingIds
+      })
+    } catch (error) {
+      return sendJson(res, 400, {
+        message: error instanceof Error ? error.message : 'Ошибка при обновлении избранного.'
+      })
+    }
   }
 
   if (req.method === 'POST' && req.url === '/api/auth/register') {
@@ -169,6 +283,7 @@ const server = http.createServer(async (req, res) => {
         name,
         email,
         passwordHash: hashPassword(password),
+        favoriteListingIds: [],
         createdAt: new Date().toISOString()
       }
 
@@ -194,13 +309,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await parseBody(req)
       const email = String(body.email || '').trim().toLowerCase()
-      const password = String(body.password || '')
-
-      if (!email || !password) {
-        return sendJson(res, 400, { message: 'Укажите email и пароль.' })
-      }
-
-      const db = readDb()
+@@ -204,26 +319,26 @@ const server = http.createServer(async (req, res) => {
       const user = db.users.find((candidate) => candidate.email === email)
 
       if (!user || !verifyPassword(password, user.passwordHash)) {
